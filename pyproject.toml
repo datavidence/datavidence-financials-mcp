@@ -1,0 +1,52 @@
+# Packaging for the standalone Datavidence Financials MCP server.
+# This repository is the single source of truth for the PyPI package
+# `datavidence-financials`. The core FastAPI service is a separate, private
+# product and is NOT part of this distribution.
+#   Build:    python -m build
+#   Publish:  twine upload dist/*
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datavidence-financials"
+version = "0.1.1"
+description = "MCP server for the Datavidence Financials API: normalized US-GAAP financial statements from SEC EDGAR, as tools for LLM agents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Datavidence LLC", email = "admin@datavidence.ai" }]
+keywords = [
+    "mcp", "model-context-protocol", "sec", "edgar", "financial-statements",
+    "xbrl", "fundamentals", "finance", "llm", "agents", "ai",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "mcp==2.1.1",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+datavidence-financials = "mcp_server.server:main"
+
+[project.urls]
+Homepage = "https://financials.datavidence.ai"
+Documentation = "https://github.com/datavidence/datavidence-financials-mcp#readme"
+Repository = "https://github.com/datavidence/datavidence-financials-mcp"
+"Bug Tracker" = "https://github.com/datavidence/datavidence-financials-mcp/issues"
+
+[tool.setuptools]
+packages = ["mcp_server"]

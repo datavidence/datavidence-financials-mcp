@@ -1,0 +1,54 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.datavidence/datavidence-financials",
+  "title": "Datavidence Financials",
+  "description": "Normalized US-GAAP financial statements & fundamentals from SEC EDGAR, as MCP tools for LLM agents.",
+  "version": "0.1.1",
+  "websiteUrl": "https://financials.datavidence.ai",
+  "repository": {
+    "url": "https://github.com/datavidence/datavidence-financials-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "datavidence-financials",
+      "version": "0.1.1",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "FL_API_KEY",
+          "description": "API key for the Datavidence Financials API. Use sandbox_demo_key for a no-signup trial (sample data); set your real key for live SEC data.",
+          "isRequired": false,
+          "isSecret": true,
+          "default": "sandbox_demo_key"
+        },
+        {
+          "name": "FL_API_BASE_URL",
+          "description": "API base URL. Defaults to the production origin; point at a marketplace gateway (RapidAPI/AWS) for metered BYOK access.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "https://api.financials.datavidence.ai"
+        },
+        {
+          "name": "FL_API_KEY_HEADER",
+          "description": "HTTP header to send the key in (e.g. X-RapidAPI-Key for the RapidAPI gateway).",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "X-API-Key"
+        },
+        {
+          "name": "FL_API_TIMEOUT",
+          "description": "Per-request timeout in seconds.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "30"
+        }
+      ]
+    }
+  ]
+}
