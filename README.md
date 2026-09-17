@@ -1,6 +1,6 @@
 # Datavidence Financials — MCP Server
 
-<!-- mcp-name: io.github.datavidence/datavidence-financials -->
+<!-- mcp-name: ai.datavidence/datavidence-financials -->
 
 Normalized **US-GAAP financial statements from SEC EDGAR** — income statement,
 balance sheet, and cash flow — exposed as **Model Context Protocol (MCP) tools**
