@@ -1,0 +1,13 @@
+# gitleaks configuration.
+# Extend the built-in rules, then allowlist values that are intentionally
+# public and therefore not secrets.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public, intentional values (not secrets)."
+# `sandbox_demo_key` is the published no-signup demo API key, shown in the
+# README and examples on purpose.
+regexes = [
+  '''sandbox_demo_key''',
+]
