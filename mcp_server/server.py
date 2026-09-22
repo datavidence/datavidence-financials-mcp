@@ -9,6 +9,7 @@ the forwarding logic lives in `client.py` (httpx-only, unit-tested).
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
+from mcp_server import __version__
 from mcp_server.client import APIClient, FinancialAPIError
 from mcp_server.config import load_config
 
@@ -17,6 +18,7 @@ _client = APIClient(_cfg.base_url, _cfg.api_key, _cfg.key_header, _cfg.timeout)
 
 server = MCPServer(
     "Datavidence Financials",
+    version=__version__,
     instructions=(
         "Tools for normalized US-GAAP financial statements sourced from SEC EDGAR "
         "XBRL filings. Every value can be traced to its source filing, and figures "
