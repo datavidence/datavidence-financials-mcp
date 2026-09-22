@@ -7,6 +7,7 @@ the forwarding logic lives in `client.py` (httpx-only, unit-tested).
 """
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
 from mcp_server.client import APIClient, FinancialAPIError
 from mcp_server.config import load_config
@@ -53,7 +54,11 @@ async def get_financials(
             include_ratios=include_ratios,
         )
     except FinancialAPIError as exc:
-        raise RuntimeError(exc.agent_message()) from None
+        # ToolError, not RuntimeError: the SDK treats any other exception as a
+        # crash and sends the model only "Error executing tool <name>", which
+        # would strip the API's message and its recovery_action hint - the whole
+        # point of the error envelope. ToolError's text reaches the caller.
+        raise ToolError(exc.agent_message()) from None
 
 
 @server.tool()
@@ -74,7 +79,7 @@ async def list_filings(
     try:
         return await _client.fetch_filings(ticker=ticker, cik=cik, form=form, limit=limit)
     except FinancialAPIError as exc:
-        raise RuntimeError(exc.agent_message()) from None
+        raise ToolError(exc.agent_message()) from None
 
 
 @server.tool()
@@ -107,7 +112,7 @@ async def get_financials_batch(
             include_ratios=include_ratios,
         )
     except FinancialAPIError as exc:
-        raise RuntimeError(exc.agent_message()) from None
+        raise ToolError(exc.agent_message()) from None
 
 
 @server.tool()
@@ -121,7 +126,7 @@ async def get_usage() -> dict:
     try:
         return await _client.fetch_usage()
     except FinancialAPIError as exc:
-        raise RuntimeError(exc.agent_message()) from None
+        raise ToolError(exc.agent_message()) from None
 
 
 def main() -> None:
