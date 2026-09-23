@@ -58,6 +58,13 @@ Honest scope: US-GAAP only (IFRS filers return a clear "unsupported" signal rath
 - **`list_filings`** — a company's recent SEC filings (newest first) from the
   EDGAR submissions index; filter by form (e.g. `10-K`). Use it to discover which
   fiscal years are available before calling `get_financials`.
+- **`get_revisions`** — how a fiscal year's figures CHANGED across filings: every
+  reported value with its filing date, form, SEC accession and EDGAR link, plus
+  whether it was restated and by how much. Pfizer's FY2019 revenue was filed at
+  $51.75B in 2020 and restated to $40.9B by 2022 — this is how you see that.
+- **`search_companies`** — find a ticker and CIK by ticker or company name, for
+  when you have "Berkshire" and need `BRK-B`. Use it before the tools above,
+  which all require an identifier.
 - **`get_usage`** — the key's monthly quota (tier, used, remaining, reset). Free
   to call; consumes no quota.
 
