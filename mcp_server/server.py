@@ -118,6 +118,54 @@ async def get_financials_batch(
 
 
 @server.tool()
+async def get_revisions(
+    year: int,
+    ticker: str | None = None,
+    cik: str | None = None,
+    metrics: str | None = None,
+) -> dict:
+    """Show how a company's reported figures for a fiscal year CHANGED across filings
+    — as originally reported, then each restatement.
+
+    A company re-reports every fiscal year as a comparative in later filings, and
+    when a number changes, that is a restatement. This returns the full series
+    for each metric: every reported value with the date it was filed, the form
+    (10-K/10-Q), the SEC accession and a direct EDGAR link, plus whether it was
+    restated and by how much.
+
+    Use it to answer "has this been restated?", to show a figure's history, or to
+    explain why a backtest on today's data would not match what an investor could
+    have known at the time. Identify the company by `ticker` OR `cik`; narrow with
+    `metrics` (comma-separated, e.g. "total_revenue,net_income") or omit for all.
+    get_financials returns the LATEST reported figure; its `as_of` parameter
+    returns the value as known on a date; this shows the whole series at once.
+    """
+    try:
+        return await _client.fetch_revisions(
+            year=year, ticker=ticker, cik=cik, metrics=metrics
+        )
+    except FinancialAPIError as exc:
+        raise ToolError(exc.agent_message()) from None
+
+
+@server.tool()
+async def search_companies(query: str, limit: int = 10) -> dict:
+    """Find a company's ticker and CIK by ticker or company name.
+
+    Use this FIRST whenever you have a company name but not its ticker or CIK —
+    every other tool needs one of those. Searches SEC's master list: "berkshire"
+    returns BRK-B with its CIK, "mobil" returns XOM.
+
+    Ranked so the obvious answer wins (an exact ticker beats a company whose name
+    merely contains the text). `limit` caps the number of matches (1-25).
+    """
+    try:
+        return await _client.search_companies(query=query, limit=limit)
+    except FinancialAPIError as exc:
+        raise ToolError(exc.agent_message()) from None
+
+
+@server.tool()
 async def get_usage() -> dict:
     """Report the calling API key's current monthly quota: tier, monthly limit,
     requests used and remaining this billing month, and when it resets.

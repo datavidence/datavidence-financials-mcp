@@ -147,6 +147,24 @@ class APIClient:
         )
         return body["data"]
 
+    async def fetch_revisions(
+        self,
+        *,
+        year: int,
+        ticker: str | None = None,
+        cik: str | None = None,
+        metrics: str | None = None,
+    ) -> dict:
+        body = await self._get(
+            "/v1/revisions",
+            {"year": year, "ticker": ticker, "cik": cik, "metrics": metrics},
+        )
+        return body["data"]
+
+    async def search_companies(self, *, query: str, limit: int | None = None) -> dict:
+        body = await self._get("/v1/companies", {"q": query, "limit": limit})
+        return body["data"]
+
     async def fetch_usage(self) -> dict:
         body = await self._get("/v1/usage", {})
         return body["data"]

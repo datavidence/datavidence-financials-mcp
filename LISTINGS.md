@@ -21,9 +21,11 @@ sheet, and cash flow — as Model Context Protocol tools for LLM agents. Point-i
 ## Long description
 Datavidence Financials gives AI agents clean, normalized US-GAAP financial
 statements sourced directly from SEC EDGAR XBRL filings. Instead of parsing raw
-filings, an agent calls four tools: `get_financials` (income statement, balance
+filings, an agent calls six tools: `get_financials` (income statement, balance
 sheet, and cash flow for a company and fiscal year, with optional financial ratios),
 `get_financials_batch` (up to 25 companies in one call, for peer comparison),
+`get_revisions` (how a year's figures changed across filings — as reported, then
+each restatement), `search_companies` (find a ticker and CIK by company name),
 `list_filings` (discover a company's available filings and years), and `get_usage`
 (check quota). Every value can be pulled *as originally reported* on a given date
 (no look-ahead bias, for backtests) and traced to its source filing via a direct
