@@ -13,9 +13,7 @@ Language models are good at reasoning about financial statements and bad at *get
 
 > ⭐ **If this is useful, please star the repo.** It's a solo, early project, and stars are how other developers find it.
 
-<!-- DEMO GIF: record a 30–60s Claude Desktop clip (a peer comparison or a point-in-time pull, showing cited SEC sources), save it as docs/demo.gif, and uncomment the line below.
-![Datavidence Financials — Claude Desktop demo](docs/demo.gif)
--->
+![Claude calls the Datavidence Financials get_revisions tool: Pfizer's FY2019 revenue as filed ($51.75B) and as it reads today ($40.9B), with links to the SEC filings](https://raw.githubusercontent.com/datavidence/datavidence-financials-mcp/main/docs/demo.gif)
 
 This is the open-source, AI-native layer for the [**Datavidence Financials API**](https://financials.datavidence.ai) — a standalone stdio server that forwards over HTTPS to the REST API (bring your own key). The connector is MIT-licensed; the underlying API is a commercial service.
 
