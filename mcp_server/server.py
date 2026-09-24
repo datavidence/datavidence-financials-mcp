@@ -6,7 +6,11 @@ Requires `mcp_server/requirements.txt` installed and FL_API_KEY set (BYOK;
 the forwarding logic lives in `client.py` (httpx-only, unit-tested).
 """
 
+from typing import Annotated
+
 from mcp.server.mcpserver import MCPServer
+from mcp.types import ToolAnnotations
+from pydantic import Field
 from mcp.server.mcpserver.exceptions import ToolError
 
 from mcp_server import __version__
@@ -14,6 +18,38 @@ from mcp_server.client import APIClient, FinancialAPIError
 from mcp_server.config import load_config
 
 _cfg = load_config()
+
+# Every tool only reads public SEC data through the API: nothing is created,
+# changed or deleted, and repeating a call returns the same answer. Declaring
+# that lets clients auto-approve the tools and lets directories score them.
+_READ_ONLY = ToolAnnotations(
+    readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=True
+)
+
+Year = Annotated[int, Field(description="Fiscal year, e.g. 2023.")]
+Ticker = Annotated[
+    str | None,
+    Field(description='Stock ticker, e.g. "AAPL". Give this or `cik`.'),
+]
+Cik = Annotated[
+    str | None,
+    Field(description='SEC Central Index Key, e.g. "0000320193". Give this or `ticker`.'),
+]
+AsOf = Annotated[
+    str | None,
+    Field(
+        description="ISO date YYYY-MM-DD. Return figures as originally reported on "
+        "that date (no look-ahead). Omit for the latest reported figures."
+    ),
+]
+IncludeProvenance = Annotated[
+    bool,
+    Field(description="Attach the SEC accession, filed date and EDGAR URL behind every value."),
+]
+IncludeRatios = Annotated[
+    bool,
+    Field(description="Add margins, ROA/ROE and leverage computed from the same statements."),
+]
 _client = APIClient(_cfg.base_url, _cfg.api_key, _cfg.key_header, _cfg.timeout)
 
 server = MCPServer(
@@ -27,14 +63,14 @@ server = MCPServer(
 )
 
 
-@server.tool()
+@server.tool(title="Get financial statements", annotations=_READ_ONLY)
 async def get_financials(
-    year: int,
-    ticker: str | None = None,
-    cik: str | None = None,
-    as_of: str | None = None,
-    include_provenance: bool = False,
-    include_ratios: bool = False,
+    year: Year,
+    ticker: Ticker = None,
+    cik: Cik = None,
+    as_of: AsOf = None,
+    include_provenance: IncludeProvenance = False,
+    include_ratios: IncludeRatios = False,
 ) -> dict:
     """Retrieve normalized US-GAAP financial statements (income statement, balance
     sheet, cash flow) for one company and fiscal year, from SEC EDGAR XBRL.
@@ -63,12 +99,15 @@ async def get_financials(
         raise ToolError(exc.agent_message()) from None
 
 
-@server.tool()
+@server.tool(title="List SEC filings", annotations=_READ_ONLY)
 async def list_filings(
-    ticker: str | None = None,
-    cik: str | None = None,
-    form: str | None = None,
-    limit: int = 25,
+    ticker: Ticker = None,
+    cik: Cik = None,
+    form: Annotated[
+        str | None,
+        Field(description='Form type filter, prefix-matched, e.g. "10-K" (includes 10-K/A).'),
+    ] = None,
+    limit: Annotated[int, Field(description="Maximum rows to return (1-100).")] = 25,
 ) -> dict:
     """List a company's recent SEC filings (newest first) from the EDGAR
     submissions index — a lean company header plus filing rows.
@@ -84,14 +123,20 @@ async def list_filings(
         raise ToolError(exc.agent_message()) from None
 
 
-@server.tool()
+@server.tool(title="Get financial statements for many companies", annotations=_READ_ONLY)
 async def get_financials_batch(
-    year: int,
-    tickers: str | None = None,
-    ciks: str | None = None,
-    as_of: str | None = None,
-    include_provenance: bool = False,
-    include_ratios: bool = False,
+    year: Year,
+    tickers: Annotated[
+        str | None,
+        Field(description='Comma-separated tickers, e.g. "AAPL,MSFT,GOOGL" (25 symbols max, with `ciks`).'),
+    ] = None,
+    ciks: Annotated[
+        str | None,
+        Field(description="Comma-separated SEC CIKs (25 symbols max, with `tickers`)."),
+    ] = None,
+    as_of: AsOf = None,
+    include_provenance: IncludeProvenance = False,
+    include_ratios: IncludeRatios = False,
 ) -> dict:
     """Retrieve normalized US-GAAP financials for MANY companies in one call — use
     this to compare peers or scan a set for a single fiscal year.
@@ -117,12 +162,15 @@ async def get_financials_batch(
         raise ToolError(exc.agent_message()) from None
 
 
-@server.tool()
+@server.tool(title="Get restatement history", annotations=_READ_ONLY)
 async def get_revisions(
-    year: int,
-    ticker: str | None = None,
-    cik: str | None = None,
-    metrics: str | None = None,
+    year: Year,
+    ticker: Ticker = None,
+    cik: Cik = None,
+    metrics: Annotated[
+        str | None,
+        Field(description='Comma-separated metric names, e.g. "total_revenue,net_income". Omit for all.'),
+    ] = None,
 ) -> dict:
     """Show how a company's reported figures for a fiscal year CHANGED across filings
     — as originally reported, then each restatement.
@@ -148,8 +196,11 @@ async def get_revisions(
         raise ToolError(exc.agent_message()) from None
 
 
-@server.tool()
-async def search_companies(query: str, limit: int = 10) -> dict:
+@server.tool(title="Search companies", annotations=_READ_ONLY)
+async def search_companies(
+    query: Annotated[str, Field(description='Company name or ticker, e.g. "berkshire" or "XOM".')],
+    limit: Annotated[int, Field(description="Maximum matches to return (1-25).")] = 10,
+) -> dict:
     """Find a company's ticker and CIK by ticker or company name.
 
     Use this FIRST whenever you have a company name but not its ticker or CIK —
@@ -165,7 +216,7 @@ async def search_companies(query: str, limit: int = 10) -> dict:
         raise ToolError(exc.agent_message()) from None
 
 
-@server.tool()
+@server.tool(title="Check API usage", annotations=_READ_ONLY)
 async def get_usage() -> dict:
     """Report the calling API key's current monthly quota: tier, monthly limit,
     requests used and remaining this billing month, and when it resets.
