@@ -1,0 +1,14 @@
+.git/
+.github/
+docs/
+dist/
+*.egg-info/
+__pycache__/
+.venv/
+tests/
+*.mcpb
+LISTINGS.md
+PUBLISHING.md
+glama.json
+server.json
+.gitleaks.toml

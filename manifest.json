@@ -1,0 +1,73 @@
+{
+  "manifest_version": "0.4",
+  "name": "datavidence-financials",
+  "display_name": "Datavidence Financials",
+  "version": "0.1.4",
+  "description": "Normalized US-GAAP financial statements from SEC EDGAR, as MCP tools: point-in-time, with a source filing behind every value.",
+  "long_description": "Income statement, balance sheet and cash flow for any SEC XBRL filer (~2009 to present), normalized to one US-GAAP schema. Pull figures as originally reported for any date (no look-ahead bias), see how a year's numbers were revised across later filings, and cite the SEC accession behind each value. Works out of the box with the no-signup sandbox key (sample data); set your RapidAPI key for live data.",
+  "author": {
+    "name": "Datavidence LLC",
+    "email": "admin@datavidence.ai",
+    "url": "https://financials.datavidence.ai"
+  },
+  "homepage": "https://financials.datavidence.ai",
+  "documentation": "https://github.com/datavidence/datavidence-financials-mcp#readme",
+  "support": "https://github.com/datavidence/datavidence-financials-mcp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datavidence/datavidence-financials-mcp"
+  },
+  "icon": "icon.png",
+  "server": {
+    "type": "uv",
+    "entry_point": "run_server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}", "run_server.py"],
+      "env": {
+        "FL_API_KEY": "${user_config.api_key}",
+        "FL_API_BASE_URL": "${user_config.api_base_url}",
+        "FL_API_KEY_HEADER": "${user_config.api_key_header}"
+      }
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "API key",
+      "description": "Leave as sandbox_demo_key for a no-signup trial (sample data). For live SEC data, paste your RapidAPI key and set the two gateway fields below.",
+      "sensitive": true,
+      "required": false,
+      "default": "sandbox_demo_key"
+    },
+    "api_base_url": {
+      "type": "string",
+      "title": "API base URL",
+      "description": "Keep the default for the sandbox. For a RapidAPI key use https://datavidence-financials-api.p.rapidapi.com",
+      "required": false,
+      "default": "https://api.financials.datavidence.ai"
+    },
+    "api_key_header": {
+      "type": "string",
+      "title": "API key header",
+      "description": "Keep X-API-Key for the sandbox. For a RapidAPI key use X-RapidAPI-Key",
+      "required": false,
+      "default": "X-API-Key"
+    }
+  },
+  "tools": [
+    {"name": "get_financials", "description": "Normalized income statement, balance sheet and cash flow for one company and fiscal year, optionally as originally reported on a date, with provenance and ratios."},
+    {"name": "get_financials_batch", "description": "The same statements for up to 25 companies in one call."},
+    {"name": "get_revisions", "description": "How a fiscal year's figures changed across later filings, with the filing date and EDGAR link behind every value."},
+    {"name": "search_companies", "description": "Find a company's ticker and CIK by ticker or name."},
+    {"name": "list_filings", "description": "List a company's recent SEC filings."},
+    {"name": "get_usage", "description": "Your API key's tier, monthly limit and calls used."}
+  ],
+  "compatibility": {
+    "platforms": ["darwin", "linux", "win32"],
+    "runtimes": {"python": ">=3.10"}
+  },
+  "keywords": ["sec", "edgar", "xbrl", "financial-statements", "fundamentals", "finance", "point-in-time"],
+  "license": "MIT",
+  "privacy_policies": ["https://financials.datavidence.ai/privacy"]
+}

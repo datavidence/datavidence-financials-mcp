@@ -19,3 +19,6 @@ env/
 *.swp
 .idea/
 .vscode/
+
+# MCP Bundles (built by `mcpb pack`)
+*.mcpb
