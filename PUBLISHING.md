@@ -131,10 +131,18 @@ repo on their own cadence.
   ```bash
   npm install -g @anthropic-ai/mcpb        # once
   mcpb validate manifest.json
-  mcpb pack . dist/datavidence-financials-<version>.mcpb
-  npx -y @smithery/cli@latest auth login   # once, opens a browser
-  npx -y @smithery/cli@latest mcp publish dist/datavidence-financials-<version>.mcpb -n datavidence/datavidence-financials
+  mcpb pack . dist/datavidence-financials-<version>.mcpb      # spec-clean: GitHub release / Claude Desktop
+  python3 scripts/build_smithery_bundle.py                    # -> dist/...-<version>-smithery.mcpb
+  npx -y @smithery/cli@latest auth login                      # once, opens a browser
+  npx -y @smithery/cli@latest namespace use datavidence
+  npx -y @smithery/cli@latest mcp publish dist/datavidence-financials-<version>-smithery.mcpb -n datavidence/datavidence-financials
   ```
+
+  Two bundles because Smithery's registry rejects a tool without `inputSchema`
+  (400 "expected object, received undefined", once per tool) while the MCPB spec
+  forbids anything but `name`/`description` on a manifest tool. The script reads
+  the live schemas from `tools/list` and swaps them into a copy of the packed
+  bundle; the committed `manifest.json` stays spec-clean.
 
   Use the scoped package `@smithery/cli` — the unscoped `smithery` on npm is an
   unrelated old package. The manifest says `server.type: "python"` — Smithery's

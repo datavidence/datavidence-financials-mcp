@@ -12,3 +12,10 @@ PUBLISHING.md
 glama.json
 server.json
 .gitleaks.toml
+scripts/
+uv.lock
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+Claude outputs/
