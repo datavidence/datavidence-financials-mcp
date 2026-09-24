@@ -3,10 +3,11 @@
 
 Smithery's registry requires every tool in the bundle's server card to carry an
 ``inputSchema`` (it returns 400 "expected object, received undefined" per tool
-otherwise), but the MCPB manifest spec only allows ``name`` and ``description``
+otherwise), and scores the card's titles, parameter descriptions and annotations,
+but the MCPB manifest spec only allows ``name`` and ``description``
 on a tool, and strict validators (``mcpb validate``, Claude Desktop) reject
 anything more. So the committed manifest.json stays spec-clean, and this script
-produces a Smithery-only bundle whose manifest has the live input schemas:
+produces a Smithery-only bundle whose manifest carries the live tool metadata:
 
     python3 scripts/build_smithery_bundle.py
     # -> dist/datavidence-financials-<version>-smithery.mcpb
@@ -26,6 +27,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+_CARD_FIELDS = ("name", "title", "description", "inputSchema", "outputSchema", "annotations")
 
 
 def live_tools() -> list[dict]:
@@ -54,12 +56,17 @@ def live_tools() -> list[dict]:
 
 def main() -> None:
     manifest = json.loads((ROOT / "manifest.json").read_text())
-    schemas = {t["name"]: t["inputSchema"] for t in live_tools()}
+    live = {t["name"]: t for t in live_tools()}
     declared = {t["name"] for t in manifest["tools"]}
-    if declared != set(schemas):
-        sys.exit(f"manifest tools {sorted(declared)} != server tools {sorted(schemas)}")
-    for tool in manifest["tools"]:
-        tool["inputSchema"] = schemas[tool["name"]]
+    if declared != set(live):
+        sys.exit(f"manifest tools {sorted(declared)} != server tools {sorted(live)}")
+    # Smithery can't run a local bundle to scan it, so the server card is all it
+    # sees: carry over everything the server reports (title, full description,
+    # inputSchema with parameter descriptions, annotations, outputSchema).
+    manifest["tools"] = [
+        {k: v for k, v in live[t["name"]].items() if k in _CARD_FIELDS}
+        for t in manifest["tools"]
+    ]
 
     out = ROOT / "dist" / f"{manifest['name']}-{manifest['version']}-smithery.mcpb"
     out.parent.mkdir(exist_ok=True)
@@ -77,7 +84,7 @@ def main() -> None:
                 if item.filename == "manifest.json":
                     data = (json.dumps(manifest, indent=2) + "\n").encode()
                 dst.writestr(item, data)
-    print(f"wrote {out} ({out.stat().st_size} bytes, {len(schemas)} tools with inputSchema)")
+    print(f"wrote {out} ({out.stat().st_size} bytes, {len(live)} tools)")
 
 
 if __name__ == "__main__":

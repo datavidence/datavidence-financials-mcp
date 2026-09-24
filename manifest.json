@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "datavidence-financials",
   "display_name": "Datavidence Financials",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Normalized US-GAAP financial statements from SEC EDGAR, as MCP tools: point-in-time, with a source filing behind every value.",
   "long_description": "Income statement, balance sheet and cash flow for any SEC XBRL filer (~2009 to present), normalized to one US-GAAP schema. Pull figures as originally reported for any date (no look-ahead bias), see how a year's numbers were revised across later filings, and cite the SEC accession behind each value. Works out of the box with the no-signup sandbox key (sample data); set your RapidAPI key for live data.",
   "author": {
