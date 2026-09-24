@@ -124,22 +124,57 @@ repo on their own cadence.
   paused indefinitely while they rework their ingestion pipeline, with no reopen
   date. Their own guidance is to publish to the official registry, which we do in
   Part C. Nothing to chase; re-check occasionally.
-- **Smithery** — does **not** ingest the registry (still absent 6 days after
-  publishing there). It takes either a remote Streamable-HTTP URL or an **MCP
+- **Smithery** — **listed 2026-09-23** at
+  https://smithery.ai/servers/datavidence/datavidence-financials (namespace
+  `datavidence`, claimed by Vijay; score 75/100 once metadata was set). It does
+  **not** ingest the registry (still absent 6 days after publishing there). It takes either a remote Streamable-HTTP URL or an **MCP
   Bundle**. We publish the bundle, so this one IS a per-release step:
 
   ```bash
   npm install -g @anthropic-ai/mcpb        # once
   mcpb validate manifest.json
-  mcpb pack . dist/datavidence-financials-<version>.mcpb
-  npx -y @smithery/cli@latest auth login   # once, opens a browser
-  npx -y @smithery/cli@latest mcp publish dist/datavidence-financials-<version>.mcpb -n datavidence/datavidence-financials
+  mcpb pack . dist/datavidence-financials-<version>.mcpb      # spec-clean: GitHub release / Claude Desktop
+  python3 scripts/build_smithery_bundle.py                    # -> dist/...-<version>-smithery.mcpb
+  npx -y @smithery/cli@latest auth login                      # once, opens a browser
+  npx -y @smithery/cli@latest namespace use datavidence
+  npx -y @smithery/cli@latest mcp publish dist/datavidence-financials-<version>-smithery.mcpb -n datavidence/datavidence-financials
   ```
 
+  Two bundles because Smithery's registry rejects a tool without `inputSchema`
+  (400 "expected object, received undefined", once per tool) while the MCPB spec
+  forbids anything but `name`/`description` on a manifest tool. The script reads
+  the live schemas from `tools/list` and swaps them into a copy of the packed
+  bundle; the committed `manifest.json` stays spec-clean.
+
+  Listing metadata (display name, description, homepage, repo, license, icon) is
+  NOT taken from the bundle. It was set once via the API and persists across
+  releases; redo only to change it. The icon form field is `icon` (Smithery's docs
+  say `file`, which fails). `whoami` output is coloured, so extract the token by
+  its prefix:
+
+  ```bash
+  SMITHERY_TOKEN=$(npx -y @smithery/cli@latest auth whoami --full 2>&1 | grep -o 'smry_[A-Za-z0-9_=+/.-]*' | head -1)
+  curl -sS -X PATCH https://api.smithery.ai/servers/datavidence%2Fdatavidence-financials \
+    -H "Authorization: Bearer $SMITHERY_TOKEN" -H "Content-Type: application/json" \
+    -d '{"displayName":"Datavidence Financials","description":"...","homepage":"https://financials.datavidence.ai","repositoryUrl":"https://github.com/datavidence/datavidence-financials-mcp","license":"MIT"}'
+  curl -sS -X PUT https://api.smithery.ai/servers/datavidence%2Fdatavidence-financials/icon \
+    -H "Authorization: Bearer $SMITHERY_TOKEN" -F "icon=@icon.png;type=image/png"
+  unset SMITHERY_TOKEN
+  ```
+
+  Smithery also exposes a hosted URL (`https://datavidence-financials--datavidence.run.tools`):
+  users connecting through it run the connector on Smithery's infrastructure, so
+  their API key transits Smithery.
+
   Use the scoped package `@smithery/cli` — the unscoped `smithery` on npm is an
-  unrelated old package. The bundle is `server.type: "uv"`: the host installs the
-  dependencies from `pyproject.toml` and runs `run_server.py`, so nothing is
-  vendored. `.mcpbignore` keeps docs (the 5.9 MB demo GIF) out of it. Attach the
+  unrelated old package. The manifest says `server.type: "python"` — Smithery's
+  CLI (4.11.1) only accepts python / node / binary / bun and rejects the MCPB
+  `"uv"` type ("Could not determine bundle runtime"). The type is only a label:
+  both Smithery and Claude Desktop launch `mcp_config`, which is
+  `uv run --directory ${__dirname} run_server.py`, so `uv` still installs the
+  dependencies from `pyproject.toml` and nothing is vendored. `run_server.py`
+  treats empty or unsubstituted `${user_config.x}` values as unset and falls back
+  to the sandbox key. `.mcpbignore` keeps docs (the 5.9 MB demo GIF) out of it. Attach the
   same `.mcpb` to the GitHub release (Part D) — Claude Desktop installs it with a
   double-click.
 - **mcp.so** — **skipped** (decision 2026-09-17): the submit form is paid-only

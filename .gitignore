@@ -22,3 +22,4 @@ env/
 
 # MCP Bundles (built by `mcpb pack`)
 *.mcpb
+uv.lock
