@@ -10,7 +10,7 @@ this is a package release, not a deploy.
 
 ---
 
-## Part A — Bump the version in three places
+## Part A — Bump the version in four places
 
 They must agree, or the registry will publish metadata that points at a PyPI
 version that does not exist.
@@ -20,6 +20,7 @@ version that does not exist.
 | `mcp_server/__init__.py` | `__version__` — what the running server reports as `serverInfo.version` |
 | `pyproject.toml` | `version` — the PyPI package |
 | `server.json` | `version` **and** `packages[0].version` (two places in one file) |
+| `manifest.json` | `version` — the MCP Bundle (.mcpb) published to Smithery |
 
 ---
 
@@ -123,8 +124,24 @@ repo on their own cadence.
   paused indefinitely while they rework their ingestion pipeline, with no reopen
   date. Their own guidance is to publish to the official registry, which we do in
   Part C. Nothing to chase; re-check occasionally.
-- **Smithery** — not yet indexed (re-checked 2026-09-22). Mid-acquisition by
-  Arcade.dev, which may be slowing ingestion. Claim it when it appears.
+- **Smithery** — does **not** ingest the registry (still absent 6 days after
+  publishing there). It takes either a remote Streamable-HTTP URL or an **MCP
+  Bundle**. We publish the bundle, so this one IS a per-release step:
+
+  ```bash
+  npm install -g @anthropic-ai/mcpb        # once
+  mcpb validate manifest.json
+  mcpb pack . dist/datavidence-financials-<version>.mcpb
+  npx -y @smithery/cli@latest auth login   # once, opens a browser
+  npx -y @smithery/cli@latest mcp publish dist/datavidence-financials-<version>.mcpb -n datavidence/datavidence-financials
+  ```
+
+  Use the scoped package `@smithery/cli` — the unscoped `smithery` on npm is an
+  unrelated old package. The bundle is `server.type: "uv"`: the host installs the
+  dependencies from `pyproject.toml` and runs `run_server.py`, so nothing is
+  vendored. `.mcpbignore` keeps docs (the 5.9 MB demo GIF) out of it. Attach the
+  same `.mcpb` to the GitHub release (Part D) — Claude Desktop installs it with a
+  double-click.
 - **mcp.so** — **skipped** (decision 2026-09-17): the submit form is paid-only
   ($39, no free tier). Revisit only on a concrete demand signal.
 

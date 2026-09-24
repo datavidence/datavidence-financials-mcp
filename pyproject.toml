@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datavidence-financials"
-# Keep in sync with mcp_server/__init__.__version__ and server.json.
+# Keep in sync with mcp_server/__init__.__version__, server.json and manifest.json.
 version = "0.1.4"
 description = "MCP server for the Datavidence Financials API: normalized US-GAAP financial statements from SEC EDGAR, as tools for LLM agents."
 readme = "README.md"
