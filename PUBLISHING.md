@@ -124,8 +124,10 @@ repo on their own cadence.
   paused indefinitely while they rework their ingestion pipeline, with no reopen
   date. Their own guidance is to publish to the official registry, which we do in
   Part C. Nothing to chase; re-check occasionally.
-- **Smithery** — does **not** ingest the registry (still absent 6 days after
-  publishing there). It takes either a remote Streamable-HTTP URL or an **MCP
+- **Smithery** — **listed 2026-09-23** at
+  https://smithery.ai/servers/datavidence/datavidence-financials (namespace
+  `datavidence`, claimed by Vijay; score 75/100 once metadata was set). It does
+  **not** ingest the registry (still absent 6 days after publishing there). It takes either a remote Streamable-HTTP URL or an **MCP
   Bundle**. We publish the bundle, so this one IS a per-release step:
 
   ```bash
@@ -143,6 +145,26 @@ repo on their own cadence.
   forbids anything but `name`/`description` on a manifest tool. The script reads
   the live schemas from `tools/list` and swaps them into a copy of the packed
   bundle; the committed `manifest.json` stays spec-clean.
+
+  Listing metadata (display name, description, homepage, repo, license, icon) is
+  NOT taken from the bundle. It was set once via the API and persists across
+  releases; redo only to change it. The icon form field is `icon` (Smithery's docs
+  say `file`, which fails). `whoami` output is coloured, so extract the token by
+  its prefix:
+
+  ```bash
+  SMITHERY_TOKEN=$(npx -y @smithery/cli@latest auth whoami --full 2>&1 | grep -o 'smry_[A-Za-z0-9_=+/.-]*' | head -1)
+  curl -sS -X PATCH https://api.smithery.ai/servers/datavidence%2Fdatavidence-financials \
+    -H "Authorization: Bearer $SMITHERY_TOKEN" -H "Content-Type: application/json" \
+    -d '{"displayName":"Datavidence Financials","description":"...","homepage":"https://financials.datavidence.ai","repositoryUrl":"https://github.com/datavidence/datavidence-financials-mcp","license":"MIT"}'
+  curl -sS -X PUT https://api.smithery.ai/servers/datavidence%2Fdatavidence-financials/icon \
+    -H "Authorization: Bearer $SMITHERY_TOKEN" -F "icon=@icon.png;type=image/png"
+  unset SMITHERY_TOKEN
+  ```
+
+  Smithery also exposes a hosted URL (`https://datavidence-financials--datavidence.run.tools`):
+  users connecting through it run the connector on Smithery's infrastructure, so
+  their API key transits Smithery.
 
   Use the scoped package `@smithery/cli` — the unscoped `smithery` on npm is an
   unrelated old package. The manifest says `server.type: "python"` — Smithery's
