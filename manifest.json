@@ -19,11 +19,16 @@
   },
   "icon": "icon.png",
   "server": {
-    "type": "uv",
+    "type": "python",
     "entry_point": "run_server.py",
     "mcp_config": {
       "command": "uv",
-      "args": ["run", "--directory", "${__dirname}", "run_server.py"],
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "run_server.py"
+      ],
       "env": {
         "FL_API_KEY": "${user_config.api_key}",
         "FL_API_BASE_URL": "${user_config.api_base_url}",
@@ -56,18 +61,52 @@
     }
   },
   "tools": [
-    {"name": "get_financials", "description": "Normalized income statement, balance sheet and cash flow for one company and fiscal year, optionally as originally reported on a date, with provenance and ratios."},
-    {"name": "get_financials_batch", "description": "The same statements for up to 25 companies in one call."},
-    {"name": "get_revisions", "description": "How a fiscal year's figures changed across later filings, with the filing date and EDGAR link behind every value."},
-    {"name": "search_companies", "description": "Find a company's ticker and CIK by ticker or name."},
-    {"name": "list_filings", "description": "List a company's recent SEC filings."},
-    {"name": "get_usage", "description": "Your API key's tier, monthly limit and calls used."}
+    {
+      "name": "get_financials",
+      "description": "Normalized income statement, balance sheet and cash flow for one company and fiscal year, optionally as originally reported on a date, with provenance and ratios."
+    },
+    {
+      "name": "get_financials_batch",
+      "description": "The same statements for up to 25 companies in one call."
+    },
+    {
+      "name": "get_revisions",
+      "description": "How a fiscal year's figures changed across later filings, with the filing date and EDGAR link behind every value."
+    },
+    {
+      "name": "search_companies",
+      "description": "Find a company's ticker and CIK by ticker or name."
+    },
+    {
+      "name": "list_filings",
+      "description": "List a company's recent SEC filings."
+    },
+    {
+      "name": "get_usage",
+      "description": "Your API key's tier, monthly limit and calls used."
+    }
   ],
   "compatibility": {
-    "platforms": ["darwin", "linux", "win32"],
-    "runtimes": {"python": ">=3.10"}
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
   },
-  "keywords": ["sec", "edgar", "xbrl", "financial-statements", "fundamentals", "finance", "point-in-time"],
+  "keywords": [
+    "sec",
+    "edgar",
+    "xbrl",
+    "financial-statements",
+    "fundamentals",
+    "finance",
+    "point-in-time"
+  ],
   "license": "MIT",
-  "privacy_policies": ["https://financials.datavidence.ai/privacy"]
+  "privacy_policies": [
+    "https://financials.datavidence.ai/privacy"
+  ]
 }

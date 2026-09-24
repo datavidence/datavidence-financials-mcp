@@ -137,9 +137,14 @@ repo on their own cadence.
   ```
 
   Use the scoped package `@smithery/cli` — the unscoped `smithery` on npm is an
-  unrelated old package. The bundle is `server.type: "uv"`: the host installs the
-  dependencies from `pyproject.toml` and runs `run_server.py`, so nothing is
-  vendored. `.mcpbignore` keeps docs (the 5.9 MB demo GIF) out of it. Attach the
+  unrelated old package. The manifest says `server.type: "python"` — Smithery's
+  CLI (4.11.1) only accepts python / node / binary / bun and rejects the MCPB
+  `"uv"` type ("Could not determine bundle runtime"). The type is only a label:
+  both Smithery and Claude Desktop launch `mcp_config`, which is
+  `uv run --directory ${__dirname} run_server.py`, so `uv` still installs the
+  dependencies from `pyproject.toml` and nothing is vendored. `run_server.py`
+  treats empty or unsubstituted `${user_config.x}` values as unset and falls back
+  to the sandbox key. `.mcpbignore` keeps docs (the 5.9 MB demo GIF) out of it. Attach the
   same `.mcpb` to the GitHub release (Part D) — Claude Desktop installs it with a
   double-click.
 - **mcp.so** — **skipped** (decision 2026-09-17): the submit form is paid-only
