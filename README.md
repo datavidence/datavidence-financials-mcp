@@ -88,6 +88,21 @@ Desktop — the tools appear:
 
 Then ask, e.g., *"Get AAPL's FY2023 income statement, balance sheet, and cash flow with ratios."* Swap in your real key for live data.
 
+## Codex
+
+Add to `~/.codex/config.toml`, then start `codex` — the tools appear:
+
+```toml
+[mcp_servers.datavidence-financials]
+command = "uvx"
+args = ["datavidence-financials"]
+env = { FL_API_KEY = "sandbox_demo_key" }
+# uvx downloads the package on first run; allow more than Codex's 10 s default.
+startup_timeout_sec = 30
+```
+
+Swap in your real key for live data.
+
 ## Configuration (environment variables)
 
 | Variable | Default | Notes |
