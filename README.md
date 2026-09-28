@@ -116,7 +116,15 @@ Swap in your real key for live data.
 
 The demo key returns sample data. For live figures, grab a key on [RapidAPI](https://rapidapi.com/datavidence-ykNLbvGmT/api/datavidence-financials-api): **Free** (1,500 calls/mo), **Pro** ($29 / 50k), **Business** ($99 / 300k). Full feature parity across tiers — they differ only by monthly call volume.
 
-For a metered marketplace channel, point `FL_API_BASE_URL` at the gateway endpoint and set `FL_API_KEY` / `FL_API_KEY_HEADER` to the gateway's key/header (BYOK), so calls are metered by the marketplace rather than hitting the origin directly.
+To use your RapidAPI key, set these three variables (in the `env` block of the Claude Desktop config, or the `env` table in Codex's `config.toml`):
+
+```
+FL_API_BASE_URL=https://datavidence-financials-api.p.rapidapi.com
+FL_API_KEY_HEADER=X-RapidAPI-Key
+FL_API_KEY=<your RapidAPI key>
+```
+
+Your key is on RapidAPI under your app's **Authorization** page, or in any code snippet on the API's page. Calls are metered by RapidAPI against your plan. Note: `get_usage` reports the gateway's shared quota, not your plan's — check your plan usage in RapidAPI.
 
 ## Run from source
 
