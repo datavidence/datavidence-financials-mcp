@@ -35,6 +35,27 @@ pipx install datavidence-financials
 FL_API_KEY=sandbox_demo_key datavidence-financials
 ```
 
+## Connect by URL (no install)
+
+Clients that support remote MCP servers (streamable HTTP) can connect without installing anything:
+
+| URL | Key | Data |
+| :--- | :--- | :--- |
+| `https://mcp.financials.datavidence.ai/mcp` | none | sample (AAPL FY2023) |
+| `https://mcp.financials.datavidence.ai/rapidapi/mcp` | your RapidAPI key, as `X-API-Key` or `Authorization: Bearer` | live SEC data, metered by RapidAPI against your plan |
+
+Claude Code:
+
+```bash
+claude mcp add --transport http datavidence-financials \
+  https://mcp.financials.datavidence.ai/rapidapi/mcp \
+  --header "X-API-Key: YOUR_RAPIDAPI_KEY"
+```
+
+For the sample data, use the `/mcp` URL and leave out the header.
+
+claude.ai: add `https://mcp.financials.datavidence.ai/mcp` as a custom connector with no sign-in. claude.ai can't send an API key for most accounts yet, so it gets the sample data for now.
+
 ## Why it's different
 
 - **Point-in-time, as originally reported.** Pass an `as_of` date and you get the figures as they stood then — no look-ahead bias from later restatements. The thing backtests quietly get burned without.
@@ -102,6 +123,16 @@ startup_timeout_sec = 30
 ```
 
 Swap in your real key for live data.
+
+Or connect by URL instead (nothing to install; set `DATAVIDENCE_API_KEY` to your RapidAPI key):
+
+```toml
+[mcp_servers.datavidence-financials]
+url = "https://mcp.financials.datavidence.ai/rapidapi/mcp"
+bearer_token_env_var = "DATAVIDENCE_API_KEY"
+```
+
+Leave out `bearer_token_env_var` and use `https://mcp.financials.datavidence.ai/mcp` for the sample data.
 
 ## Configuration (environment variables)
 
