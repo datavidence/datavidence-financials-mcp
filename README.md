@@ -155,7 +155,7 @@ FL_API_KEY_HEADER=X-RapidAPI-Key
 FL_API_KEY=<your RapidAPI key>
 ```
 
-Your key is on RapidAPI under your app's **Authorization** page, or in any code snippet on the API's page. Calls are metered by RapidAPI against your plan. Note: `get_usage` reports the gateway's shared quota, not your plan's — check your plan usage in RapidAPI.
+Your key is on RapidAPI under your app's **Authorization** page, or in any code snippet on the API's page. Calls are metered by RapidAPI against your plan. With a RapidAPI key, `get_usage` shows your RapidAPI plan and its monthly limit; RapidAPI meters your calls, so check how many you've used in your RapidAPI dashboard.
 
 ## Run from source
 
