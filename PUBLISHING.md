@@ -205,4 +205,4 @@ dies with "Connection closed" if you pipe everything at once and close:
    envelope, e.g. `[INVALID_YEAR_FORMAT] … Recovery: …`. A bare
    "Error executing tool get_financials" means a handler raised something other
    than `ToolError` and the SDK masked it as a crash — that regression shipped in
-   0.1.2 and is guarded by `tests/test_mcp_tool_errors.py` in the core repo.
+   0.1.2 and is guarded by `tests/test_tool_errors.py` and `tests/test_tools.py` here.
