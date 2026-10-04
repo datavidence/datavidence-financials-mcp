@@ -164,6 +164,18 @@ pip install -e .
 FL_API_KEY=sandbox_demo_key python -m mcp_server.server   # stdio transport
 ```
 
+## Tests
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+29 tests, no network and no API key needed. They call every tool through the MCP SDK
+with the HTTP layer stubbed, check that an API error reaches the model with its recovery
+hint, and check that each tool declares all four behaviour hints (read-only,
+non-destructive, idempotent, open-world).
+
 ## Feedback
 
 Found a company where the numbers come back wrong, or a field/tool you need? **[Open an issue](https://github.com/datavidence/datavidence-financials-mcp/issues)** — the normalization edge cases are exactly the feedback that makes this better, and I read every one.

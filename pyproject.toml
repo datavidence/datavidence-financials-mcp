@@ -41,6 +41,10 @@ dependencies = [
     "pydantic>=2",
 ]
 
+[project.optional-dependencies]
+# Test tools only; not needed to run the server.  pip install -e ".[dev]" && pytest
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+
 [project.scripts]
 datavidence-financials = "mcp_server.server:main"
 
@@ -52,3 +56,7 @@ Repository = "https://github.com/datavidence/datavidence-financials-mcp"
 
 [tool.setuptools]
 packages = ["mcp_server"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
