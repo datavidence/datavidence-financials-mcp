@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MCP registry](https://img.shields.io/badge/MCP%20registry-ai.datavidence%2Fdatavidence--financials-6f42c1.svg)](https://registry.modelcontextprotocol.io)
 [![smithery badge](https://smithery.ai/badge/datavidence/datavidence-financials)](https://smithery.ai/servers/datavidence/datavidence-financials)
+[![M8ven Score](https://m8ven.ai/badge/mcp/datavidence-financials-18j0pv)](https://m8ven.ai/mcp/datavidence-financials-18j0pv?s=readme)
 
 Language models are good at reasoning about financial statements and bad at *getting* them. SEC EDGAR has the data, but its XBRL is a thicket of inconsistent tags, renamed concepts, and per-filer quirks — so agents either hallucinate the numbers or you spend weeks building a normalization layer. This is that layer: your agent asks for a company's financials and gets a clean, consistent answer — over the **Model Context Protocol**, or as a plain **REST API**.
 
