@@ -176,6 +176,25 @@ with the HTTP layer stubbed, check that an API error reaches the model with its 
 hint, and check that each tool declares all four behaviour hints (read-only,
 non-destructive, idempotent, open-world).
 
+## Privacy Policy
+
+The connector runs on your machine, has no telemetry and stores nothing. When a tool is
+called it sends two things to the Datavidence Financials API: the tool's arguments (for
+example a ticker, a CIK, a fiscal year or a company-name search) and your API key, in a
+request header. It does not see your files or the rest of your conversation.
+
+- **Where it goes:** `https://api.financials.datavidence.ai` by default. If you set
+  `FL_API_BASE_URL` to the RapidAPI gateway, requests go through RapidAPI, under its own
+  privacy policy.
+- **What the API records:** for each request, the endpoint, HTTP status, response time,
+  timestamp and IP address, tied to a hash of the API key (never the key itself).
+- **Retention:** usage logs are kept for 12 months.
+- **Sharing:** not sold; shared only with the marketplace gateway you subscribed through and
+  the infrastructure provider that hosts the service.
+- **Contact:** admin@datavidence.ai
+
+Full policy: https://financials.datavidence.ai/privacy
+
 ## Feedback
 
 Found a company where the numbers come back wrong, or a field/tool you need? **[Open an issue](https://github.com/datavidence/datavidence-financials-mcp/issues)** — the normalization edge cases are exactly the feedback that makes this better, and I read every one.
@@ -187,6 +206,8 @@ Found a company where the numbers come back wrong, or a field/tool you need? **[
 - **MCP registry:** `ai.datavidence/datavidence-financials`
 - **PyPI:** https://pypi.org/project/datavidence-financials/
 - **Get a key (RapidAPI):** https://rapidapi.com/datavidence-ykNLbvGmT/api/datavidence-financials-api
+- **Privacy policy:** https://financials.datavidence.ai/privacy
+- **Terms of service:** https://financials.datavidence.ai/terms
 - **Security:** see [`SECURITY.md`](SECURITY.md) to report a vulnerability privately.
 
 ## License
